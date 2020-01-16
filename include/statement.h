@@ -253,6 +253,18 @@ struct xt_stmt {
 
 extern struct stmt *xt_stmt_alloc(const struct location *loc);
 
+enum nft_jool_type {
+	NFT_JOOL_SIIT = (1 << 0),
+	NFT_JOOL_NAT64 = (1 << 1),
+};
+
+struct jool_stmt {
+	enum nft_jool_type	type;
+	const char		*instance;
+};
+
+extern struct stmt *jool_stmt_alloc(const struct location *loc);
+
 /**
  * enum stmt_types - statement types
  *
@@ -281,6 +293,7 @@ extern struct stmt *xt_stmt_alloc(const struct location *loc);
  * @STMT_CONNLIMIT:	connection limit statement
  * @STMT_MAP:		map statement
  * @STMT_SYNPROXY:	synproxy statement
+ * @STMT_JOOL:		Jool statement
  */
 enum stmt_types {
 	STMT_INVALID,
@@ -309,6 +322,7 @@ enum stmt_types {
 	STMT_CONNLIMIT,
 	STMT_MAP,
 	STMT_SYNPROXY,
+	STMT_JOOL,
 };
 
 /**
@@ -374,6 +388,7 @@ struct stmt {
 		struct flow_stmt	flow;
 		struct map_stmt		map;
 		struct synproxy_stmt	synproxy;
+		struct jool_stmt	jool;
 	};
 };
 

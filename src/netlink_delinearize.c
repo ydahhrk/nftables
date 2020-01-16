@@ -1106,6 +1106,20 @@ out_err:
 	xfree(stmt);
 }
 
+static void netlink_parse_jool(struct netlink_parse_ctx *ctx,
+			       const struct location *loc,
+			       const struct nftnl_expr *nle)
+{
+	struct stmt *stmt;
+
+	stmt = jool_stmt_alloc(loc);
+	stmt->jool.type = nftnl_expr_get_u8(nle, NFTNL_EXPR_JOOL_TYPE);
+	stmt->jool.instance = xstrdup(nftnl_expr_get_str(nle,
+						     NFTNL_EXPR_JOOL_INSTANCE));
+
+	ctx->stmt = stmt;
+}
+
 static void netlink_parse_synproxy(struct netlink_parse_ctx *ctx,
 				   const struct location *loc,
 				   const struct nftnl_expr *nle)
@@ -1594,6 +1608,7 @@ static const struct {
 	{ .name = "flow_offload", .parse = netlink_parse_flow_offload },
 	{ .name = "xfrm",	.parse = netlink_parse_xfrm },
 	{ .name = "synproxy",	.parse = netlink_parse_synproxy },
+	{ .name = "jool",	.parse = netlink_parse_jool },
 };
 
 static int netlink_parse_expr(const struct nftnl_expr *nle,

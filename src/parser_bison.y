@@ -523,6 +523,8 @@ int nft_lex(void *, void *, void *);
 %token FULLY_RANDOM		"fully-random"
 %token PERSISTENT		"persistent"
 
+%token JOOL			"jool"
+
 %token QUEUE			"queue"
 %token QUEUENUM			"num"
 %token BYPASS			"bypass"
@@ -642,6 +644,8 @@ int nft_lex(void *, void *, void *);
 %destructor { stmt_free($$); }	tproxy_stmt
 %type <stmt>			synproxy_stmt synproxy_stmt_alloc
 %destructor { stmt_free($$); }	synproxy_stmt synproxy_stmt_alloc
+%type <stmt>			jool_stmt jool_stmt_alloc
+%destructor { stmt_free($$); }	jool_stmt jool_stmt_alloc
 
 
 %type <stmt>			queue_stmt queue_stmt_alloc
@@ -2492,6 +2496,7 @@ stmt			:	verdict_stmt
 			|	set_stmt
 			|	map_stmt
 			|	synproxy_stmt
+			|	jool_stmt
 			;
 
 verdict_stmt		:	verdict_expr
@@ -3011,6 +3016,32 @@ synproxy_sack		:	/* empty */	{ $$ = 0; }
 			|	SACKPERM
 			{
 				$$ = NF_SYNPROXY_OPT_SACK_PERM;
+			}
+			;
+
+jool_stmt		:	jool_stmt_alloc	jool_opts
+			;
+
+jool_stmt_alloc		:	JOOL
+			{
+				$$ = jool_stmt_alloc(&@$);
+			}
+			;
+
+jool_opts		:	string	string
+			{
+				if (!strcmp("siit", $1))
+					$<stmt>0->jool.type = NFT_JOOL_SIIT;
+				else if (!strcmp("nat64", $1))
+					$<stmt>0->jool.type = NFT_JOOL_NAT64;
+				else {
+					erec_queue(error(&@1, "invalid jool type (expected siit or nat64)"),
+						   state->msgs);
+					xfree($1);
+					YYERROR;
+				}
+				xfree($1);
+				$<stmt>0->jool.instance = $2;
 			}
 			;
 

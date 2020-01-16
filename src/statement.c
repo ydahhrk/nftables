@@ -942,3 +942,36 @@ struct stmt *synproxy_stmt_alloc(const struct location *loc)
 {
 	return stmt_alloc(loc, &synproxy_stmt_ops);
 }
+
+static void jool_stmt_print(const struct stmt *stmt, struct output_ctx *octx)
+{
+	const char *type = "<unknown>";
+
+	switch (stmt->jool.type) {
+	case NFT_JOOL_SIIT:
+		type = "siit";
+		break;
+	case NFT_JOOL_NAT64:
+		type = "nat64";
+		break;
+	}
+
+	nft_print(octx, "jool \"%s\" \"%s\"", type, stmt->jool.instance);
+}
+
+static void jool_stmt_destroy(struct stmt *stmt)
+{
+	xfree(stmt->jool.instance);
+}
+
+static const struct stmt_ops jool_stmt_ops = {
+	.type		= STMT_JOOL,
+	.name		= "jool",
+	.print		= jool_stmt_print,
+	.destroy	= jool_stmt_destroy,
+};
+
+struct stmt *jool_stmt_alloc(const struct location *loc)
+{
+	return stmt_alloc(loc, &jool_stmt_ops);
+}

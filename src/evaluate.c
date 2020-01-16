@@ -3353,6 +3353,7 @@ int stmt_evaluate(struct eval_ctx *ctx, struct stmt *stmt)
 	case STMT_QUOTA:
 	case STMT_NOTRACK:
 	case STMT_FLOW_OFFLOAD:
+	case STMT_JOOL:
 		return 0;
 	case STMT_EXPRESSION:
 		return stmt_evaluate_expr(ctx, stmt);

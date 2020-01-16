@@ -375,6 +375,8 @@ addrstring	({macaddr}|{ip4addr}|{ip6addr})
 "fully-random"		{ return FULLY_RANDOM; }
 "persistent"		{ return PERSISTENT; }
 
+"jool"			{ return JOOL; }
+
 "ll"			{ return LL_HDR; }
 "nh"			{ return NETWORK_HDR; }
 "th"			{ return TRANSPORT_HDR; }

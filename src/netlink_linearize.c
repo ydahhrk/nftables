@@ -1434,6 +1434,19 @@ static void netlink_gen_meter_stmt(struct netlink_linearize_ctx *ctx,
 	nftnl_rule_add_expr(ctx->nlr, nle);
 }
 
+static void netlink_gen_jool_stmt(struct netlink_linearize_ctx *ctx,
+				  const struct stmt *stmt)
+{
+	struct nftnl_expr *nle;
+
+	nle = alloc_nft_expr("jool");
+
+	nftnl_expr_set_u8(nle, NFTNL_EXPR_JOOL_TYPE, stmt->jool.type);
+	nftnl_expr_set_str(nle, NFTNL_EXPR_JOOL_INSTANCE, stmt->jool.instance);
+
+	nftnl_rule_add_expr(ctx->nlr, nle);
+}
+
 static void netlink_gen_stmt(struct netlink_linearize_ctx *ctx,
 			     const struct stmt *stmt)
 {
@@ -1487,6 +1500,8 @@ static void netlink_gen_stmt(struct netlink_linearize_ctx *ctx,
 		return netlink_gen_objref_stmt(ctx, stmt);
 	case STMT_MAP:
 		return netlink_gen_map_stmt(ctx, stmt);
+	case STMT_JOOL:
+		return netlink_gen_jool_stmt(ctx, stmt);
 	default:
 		BUG("unknown statement type %s\n", stmt->ops->name);
 	}
